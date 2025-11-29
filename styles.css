@@ -1,0 +1,38 @@
+:root {
+   --red: #8B0000; 
+   --yellow: #FFD700;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--red);
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 90%;
+    min-height: 100px;
+    max-width: 600px;
+    padding: 15px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 1.3em;
+    background: var(--yellow);
+    color: var(--red);
+}
+
+button:hover {
+    background: #FFC107;
+}
