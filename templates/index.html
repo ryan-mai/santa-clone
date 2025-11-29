@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STS 🎅</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Speak to Santa!</h1>
+    <p>Send a letter to Santa</p>
+    <form action="/generate" method="post">
+        <label for="text">Enter text:</label>
+        <textarea name="text" rows="4" cols="50" placeholder="Merry Christmas!"></textarea>
+        <button type="submit">Get Santa's Message!</button>
+    </form>
+    <div class="wrapper">
+        <div class="inner" style="--quantity: 10;">
+            <div class="card" style="--index: 1; --color-card: 142, 252, 204;">
+                <div class="img"><img src="https://hips.hearstapps.com/hmg-prod/images/santa-claus-phone-number-6503674995d6a.jpg?crop=0.662xw:1.00xh;0.114xw,0&resize=980:*" alt="Santa Calling"></div>
+            </div>
+            <div class="card" style="--index: 2; --color-card: 142, 252, 157;">
+                <div class="img"></div>
+            </div>
+            <div class="card" style="--index: 3; --color-card: 215, 252, 157;">
+                <div class="img"></div>
+            </div>
+            <div class="card" style="--index: 4; --color-card: 252, 252, 142;">
+                <div class="img"></div>
+            </div>
+            <div class="card" style="--index: 5; --color-card: 252, 208, 142;">
+                <div class="img"></div>
+            </div>
+            <div class="card" style="--index: 6; --color-card: 252, 142, 142;">
+                <div class="img"></div>
+            </div>
+            
+            <div class="card" style="--index: 7; --color-card: 252, 142, 239;">
+                <div class="img"></div>
+            </div>
+            
+            <div class="card" style="--index: 8; --color-card: 204, 142, 252;">
+                <div class="img"></div>
+            </div>
+            
+            <div class="card" style="--index: 9; --color-card: 142, 202, 252;">
+                <div class="img"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

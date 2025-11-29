@@ -1,0 +1,134 @@
+:root {
+    --red: #D42426;
+    --darkRed: #8B0000;
+    --gold: #F8B229;
+    --green: #165B33;
+    --darkGreen: #0B301A;
+    --white: #F0F4F8;
+    --mono: 'Mountains of Christmas', cursive;
+    --serif: 'Playfair Display', serif;
+    --sans: '"Quicksand"', 'sans-serif';
+}
+
+html, body {
+    background-color: var(--darkRed);
+}
+body {
+    color: var(--white);
+    text-align: center;
+    padding: 40px;
+}
+
+h1 {
+    font-family: var(--mono);
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 90%;
+    min-height: 100px;
+    max-width: 600px;
+    padding: 15px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 1.3em;
+    background: var(--yellow);
+    color: var(--red);
+}
+
+button:hover {
+    background: #FFC107;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.inner {
+    --w: 400px;
+    --h: 350px;
+    --translateZ: calc((var(--w) + var(--h)) + 0px);
+    --rotateX: -15deg;
+    --perspective: 500px;
+    position: relative;
+    width: var(--w);
+    height: var(--h);
+    z-index: 2;
+    transform-style: preserve-3d;
+    transform: perspective(var(--perspective));
+    --_a: rotating 20s linear infinite;
+    animation: var(--_a), var(--_a) paused;
+    animation-composition: add;
+    cursor: grab;
+    user-select: none;
+    /* animation-play-state: running; */
+}
+
+@keyframes rotating {
+    from {
+        transform: perspective(var(--perspective)) rotateX(var(--rotateX))
+            rotateY(0);
+    }
+    to {
+        transform: perspective(var(--perspective)) rotateX(var(--rotateX))
+            rotateY(1turn);
+    }
+}
+
+.card {
+    position: absolute;
+    border: 2px solid rgba(var(--color-card));
+    border-radius: 5px;
+    overflow: hidden;
+    inset: 0;
+    transform: rotateY(calc((360deg / var(--quantity)) * var(--index)))
+        translateZ(var(--translateZ)) scale(1);
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: cover;
+    background: #0000
+        radial-gradient(
+            circle,
+            rgba(var(--color-card), 0.2) 0%,
+            rgba(var(--color-card), 0.6) 80%,
+            rgba(var(--color-card), 0.9) 100%
+        );
+
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.1);
+}
+
+.img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.wrapper:hover .inner {
+    animation-play-state: running;
+}

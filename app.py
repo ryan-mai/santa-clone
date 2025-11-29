@@ -19,33 +19,38 @@ elevenlabs = ElevenLabs(
 app = Flask(__name__)
 
 def post_tts(txt: str):
-    audio_gen = elevenlabs.text_to_speech.convert(
-        text=txt,
-        voice_id=VOICE_ID,
-        optimize_streaming_latency=4,
-        model_id="eleven_flash_v2_5",
-        output_format="mp3_44100_128",
-    )
+    try:
+        audio_gen = elevenlabs.text_to_speech.convert(
+            text=txt,
+            voice_id=VOICE_ID,
+            model_id="eleven_turbo_v2",
+            output_format="mp3_44100_128",
+        )
 
-    for chunk in audio_gen:
-        if chunk:
-            yield chunk
+        audio_bytes = b"".join(chunk for chunk in audio_gen)
+        return audio_bytes
+    
+    except Exception as e:
+        print(f"Error: {e}")
 
 @app.route('/')
 def home():
+    print('Opening index.html')
     return render_template("index.html")
 
 @app.route('/generate', methods=['POST'])
 def generate_audio():
-    text = request.form.get('text', 'Hi')
-    if not text:
-        return "Enter some text!", 400
+    text = request.form.get('text', 'Hello')
 
-    return Response(
-        headers={
-            "Content-Diposition": "inline; filename=santa_voice.mp3",
-            "Cache-Control": "no-cache",
-        },
+    audio = post_tts(text)
+
+    audio_bytes = io.BytesIO(audio) #type: ignore
+    audio_bytes.seek(0)
+
+    return send_file(
+        audio_bytes,
+        as_attachment=True,
+        download_name="output.mp3",
         mimetype="audio/mpeg"
     )
 
