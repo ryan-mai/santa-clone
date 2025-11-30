@@ -39,7 +39,7 @@ button {
     margin-top: 20px;
     padding: 15px 40px;
     font-size: 1.3em;
-    background: var(--yellow);
+    background: var(--gold);
     color: var(--red);
 }
 
@@ -64,28 +64,25 @@ button:hover {
     --translateZ: calc((var(--w) + var(--h)) + 0px);
     --rotateX: -15deg;
     --perspective: 500px;
+    --rotation: 0deg;
     position: relative;
     width: var(--w);
     height: var(--h);
     z-index: 2;
     transform-style: preserve-3d;
-    transform: perspective(var(--perspective));
-    --_a: rotating 20s linear infinite;
-    animation: var(--_a), var(--_a) paused;
-    animation-composition: add;
+    transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(var(--rotation));
+    /* animation: rotating 20s linear infinite; */
+    /* animation-play-state: running; */
     cursor: grab;
     user-select: none;
-    /* animation-play-state: running; */
 }
 
 @keyframes rotating {
     from {
-        transform: perspective(var(--perspective)) rotateX(var(--rotateX))
-            rotateY(0);
+        --rotation: 0deg;
     }
     to {
-        transform: perspective(var(--perspective)) rotateX(var(--rotateX))
-            rotateY(1turn);
+        --rotation: 360deg;
     }
 }
 
@@ -113,7 +110,6 @@ button:hover {
             rgba(var(--color-card), 0.6) 80%,
             rgba(var(--color-card), 0.9) 100%
         );
-
     transform: scale(1);
     transition: transform 0.3s ease;
 }
@@ -127,8 +123,5 @@ button:hover {
     height: 100%;
     object-fit: cover;
     display: block;
-}
-
-.wrapper:hover .inner {
-    animation-play-state: running;
+    cursor: pointer;
 }
