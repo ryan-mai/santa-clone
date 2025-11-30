@@ -1,3 +1,25 @@
+:root {
+    --red: #cb5a5e;
+    --darkRed: #8B0000;
+    --gold: #F8B229;
+    --green: #165B33;
+    --darkGreen: #0B301A;
+    --white: #F0F4F8;
+    --mono: 'Mountains of Christmas', cursive;
+    --serif: 'Playfair Display', serif;
+    --sans: "Quicksand", sans-serif;
+}
+
+html, body {
+    background-color: var(--darkRed);
+}
+body {
+    color: var(--white);
+    text-align: center;
+    padding: 40px;
+}
+
+
 /* Mail */
 .letter-image {
     position: absolute;
@@ -7,6 +29,11 @@
     height: 200px;
     transform: translate(-50%, -50%);
     cursor: pointer;
+    z-index: 1;
+    transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1),
+                height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1),
+                transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1),
+                border-radius 0.6s ease;
 }
 
 .animated-mail {
@@ -74,8 +101,8 @@
             width: 100%;
             background: repeating-linear-gradient(
                 -45deg,
-                #cb5a5e,
-                #cb5a5e 8px,
+                var(--red),
+                var(--red) 8px,
                 transparent 8px,
                 transparent 8px
             );
@@ -86,7 +113,8 @@
             margin-left: 5px;
             height: 10px;
             width: 40%;
-            background: #cb5a5e;
+            background: var(--red);
+            overflow: hidden;
         }
 
         .letter-context {
@@ -94,7 +122,8 @@
             margin-left: 5px;
             height: 10px;
             width: 20%;
-            background: #cb5a5e;
+            background: var(--red);
+            overflow: hidden;
         }
 
         .letter-stamp {
@@ -103,8 +132,19 @@
             border-radius: 100%;
             height: 30px;
             width: 30px;
-            background: #cb5a5e;
+            background: var(--red);
             opacity: 0.3;
+            overflow: hidden;
+        }
+        .letter-textarea {
+            display: none;
+        }
+
+        .letter-title label,
+        .letter-title input,
+        .letter-context label,
+        .letter-context input {
+            opacity: 0;
         }
     }
 }
@@ -121,7 +161,7 @@
     background: radial-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0));
 }
 
-.letter-image:hover {
+.letter-image:not(.expanded):hover {
     .animated-mail {
         transform: translateY(50px);
     }
@@ -141,48 +181,233 @@
     }
 }
 
-.letter-textarea {
-    position: absolute;
-    top: 20px;
-    left: 10px;
-    width: 150px;
-    height: 250px;
-    background: white;
-    border: none;
-    padding: 10px;
-    font-family: var(--serif);
-    font-size: 1em;
-    color: #333;
-    resize: none;
-    opacity: 0;
-    pointer-events: none;
-    transform: opacity 0.5s ease;
-    z-index: 4;
-}
-
 .letter-image.expanded {
     position: fixed;
-    /* top: 50%;
-    left: 50%; */
-    transform: translate(-50%, -50%) scale(2);
-    z-index: 5;
-    width: 600px;
-    height: 400px;
-    transition: transform 0.5s ease, width 0.5s ease;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+    height: 95vh;
+    width: 95vw;
+    max-width: 750px;
+    transform: translate(-50%, -50%);
+    background: white;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    border-radius: 5px;
+    cursor: default;
+}
+
+.letter-image.expanded ~ .shadow,
+.letter-image.expanded .animated-mail .body,
+.letter-image.expanded .animated-mail .top-fold,
+.letter-image.expanded .animated-mail .back-fold,
+.letter-image.expanded .animated-mail .left-fold,
+.letter-image.expanded .animated-mail .letter-stamp {
+    display: none;
+}
+
+.letter-image.expanded .animated-mail {
+    width: 100%;
+    height: 100%;
+    position: static;
+    transform: none;
 }
 
 .letter-image.expanded .letter {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    box-sizing: border-box;
+    animation: unfold 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes unfold {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.letter-image.expanded .letter-title,
+.letter-image.expanded .letter-context {
+    background: transparent;
+    height: auto;
+    width: 100%;
+    margin: 15px 0;
+    position: relative;
+    overflow: visible;
+}
+
+.letter-image.expanded .letter-title label,
+.letter-image.expanded .letter-context label {
+    font-family: var(--mono);
+    color: var(--darkRed);
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.letter-image.expanded .letter-title input {
+    font-size: 1.5rem;
+}
+
+.letter-image.expanded .letter-context input {
+    font-size: 1.3rem;
+}
+
+.letter-image.expanded .letter-title input,
+.letter-image.expanded .letter-context input {
+    display: block;
+    font-family: var(--serif);
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #eee;
+    background: transparent;
+    color: #333;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 5px 0;
+    outline: none;
+}
+
+.letter-image.expanded .letter-title input:focus,
+.letter-image.expanded .letter-context input:focus {
+    border-bottom-color: var(--red);
 }
 
 .letter-image.expanded .letter-textarea {
+    display: block;
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 0;
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: #333;
+    resize: none;
+    opacity: 1;
+    pointer-events: auto;
+    outline: none;
+    line-height: 32px;
+    background-image: linear-gradient(
+        transparent,
+        transparent 31px,
+        #eee 31px,
+        #eee 32px);
+    background-size: 100% 32px;
+    background-position: 0 8px;
+    margin-top: 20px;
+
+    .letter {
+        left : 20px;
+        bottom: 0;
+        position: absolute;
+        width: 160px;
+        height: 60px;
+        background: white;
+        z-index: 1;
+        overflow: hidden;
+        transition: .4s .2s;
+    }
+
+    .letter-border {
+        height: 10px;
+        width: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            var(--red),
+            var(--red) 8px,
+            transparent 8px,
+            transparent 8px
+        );
+    }
+
+    .letter-title {
+        margin-top: 10px;
+        margin-left: 5px;
+        height: 10px;
+        width: 40%;
+        background: var(--red);
+        overflow: hidden;
+    }
+
+    .letter-context {
+        margin-top: 10px;
+        margin-left: 5px;
+        height: 10px;
+        width: 20%;
+        background: var(--red);
+        overflow: hidden;
+    }
+
+    .letter-title label,
+    .letter-title input,
+    .letter-context label,
+    .letter-context input {
+        opacity: 1;
+        display: none;
+    }
+
+    .letter-stamp {
+        margin-top: 30px;
+        margin-left: 120px;
+        border-radius: 100%;
+        height: 30px;
+        width: 30px;
+        background: var(--red);
+        opacity: 0.3;
+    }
+
+    .letter-textarea {
+        display: none;
+    }
+}
+
+.cancel-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    font-family: var(--mono);
+    font-size: 1rem;
+    z-index: 10;
+}
+
+.letter-image.expanded .cancel-btn {
     opacity: 1;
     pointer-events: auto;
 }
 
-/* .letter-image.expanded .letter-border,
-.letter-image.expanded .letter-title,
-.letter-image.expanded .letter-context,
-.letter-image.expanded .letter-stamp {
-    display: none;
-} */
+body.blurred > *:not(.letter-image) {
+    filter: blur(5px);
+    pointer-events: none;
+}
+
+input {
+    font-family: var(--mono);
+}
+
+textarea {
+    font-family: var(--serif);
+}
