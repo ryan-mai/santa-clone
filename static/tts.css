@@ -125,16 +125,20 @@ body {
             background: var(--red);
             overflow: hidden;
         }
+        
+        .letter-email {
+            display: none;
+        }
 
         .letter-stamp {
             margin-top: 30px;
             margin-left: 120px;
-            border-radius: 100%;
+            /* border-radius: 100%;
             height: 30px;
             width: 30px;
             background: var(--red);
             opacity: 0.3;
-            overflow: hidden;
+            overflow: hidden; */
         }
         .letter-textarea {
             display: none;
@@ -221,11 +225,18 @@ body {
     background: white;
     display: flex;
     flex-direction: column;
-    padding: 40px;
+    padding: 40px 40px 100px 40px;
     box-sizing: border-box;
     animation: unfold 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
     opacity: 0;
 }
+
+.letter-image.expanded form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
 
 @keyframes unfold {
     0% {
@@ -239,7 +250,8 @@ body {
 }
 
 .letter-image.expanded .letter-title,
-.letter-image.expanded .letter-context {
+.letter-image.expanded .letter-context,
+.letter-image.expanded .letter-email {
     background: transparent;
     height: auto;
     width: 100%;
@@ -249,24 +261,28 @@ body {
 }
 
 .letter-image.expanded .letter-title label,
-.letter-image.expanded .letter-context label {
+.letter-image.expanded .letter-context label,
+.letter-image.expanded .letter-email label {
     font-family: var(--mono);
     color: var(--darkRed);
     display: block;
     margin-bottom: 8px;
     line-height: 1.2;
+    text-align: left;
 }
 
 .letter-image.expanded .letter-title input {
     font-size: 1.5rem;
 }
 
-.letter-image.expanded .letter-context input {
+.letter-image.expanded .letter-context input,
+.letter-image.expanded .letter-email input {
     font-size: 1.3rem;
 }
 
 .letter-image.expanded .letter-title input,
-.letter-image.expanded .letter-context input {
+.letter-image.expanded .letter-context input,
+.letter-image.expanded .letter-email input {
     display: block;
     font-family: var(--serif);
     width: 100%;
@@ -281,7 +297,8 @@ body {
 }
 
 .letter-image.expanded .letter-title input:focus,
-.letter-image.expanded .letter-context input:focus {
+.letter-image.expanded .letter-context input:focus,
+.letter-image.expanded .letter-email input:focus {
     border-bottom-color: var(--red);
 }
 
@@ -310,76 +327,22 @@ body {
     background-size: 100% 32px;
     background-position: 0 8px;
     margin-top: 20px;
+} 
 
-    .letter {
-        left : 20px;
-        bottom: 0;
-        position: absolute;
-        width: 160px;
-        height: 60px;
-        background: white;
-        z-index: 1;
-        overflow: hidden;
-        transition: .4s .2s;
-    }
-
-    .letter-border {
-        height: 10px;
-        width: 100%;
-        background: repeating-linear-gradient(
-            -45deg,
-            var(--red),
-            var(--red) 8px,
-            transparent 8px,
-            transparent 8px
-        );
-    }
-
-    .letter-title {
-        margin-top: 10px;
-        margin-left: 5px;
-        height: 10px;
-        width: 40%;
-        background: var(--red);
-        overflow: hidden;
-    }
-
-    .letter-context {
-        margin-top: 10px;
-        margin-left: 5px;
-        height: 10px;
-        width: 20%;
-        background: var(--red);
-        overflow: hidden;
-    }
-
-    .letter-title label,
-    .letter-title input,
-    .letter-context label,
-    .letter-context input {
-        opacity: 1;
-        display: none;
-    }
-
-    .letter-stamp {
-        margin-top: 30px;
-        margin-left: 120px;
-        border-radius: 100%;
-        height: 30px;
-        width: 30px;
-        background: var(--red);
-        opacity: 0.3;
-    }
-
-    .letter-textarea {
-        display: none;
-    }
+.letter-image.expanded .letter-email {
+    position: absolute;
+    display: block;
+    bottom: 20px;
+    left: 40px;
+    width: 300px;
+    margin: 0;
+    z-index: 20;
 }
 
 .cancel-btn {
     position: absolute;
     bottom: 20px;
-    right: 20px;
+    right: 140px;
     padding: 10px 20px;
     background: var(--red);
     color: white;
@@ -394,7 +357,26 @@ body {
     z-index: 10;
 }
 
-.letter-image.expanded .cancel-btn {
+.submit-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    font-family: var(--mono);
+    font-size: 1rem;
+    z-index: 10;
+}
+
+.letter-image.expanded .cancel-btn,
+.letter-image.expanded .submit-btn {
     opacity: 1;
     pointer-events: auto;
 }
@@ -410,4 +392,16 @@ input {
 
 textarea {
     font-family: var(--serif);
+}
+
+.letter-image.fly {
+    pointer-events: none;
+    z-index: 2000;
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity .9s ease;
+    transform: translateY(-120vh) scale(0.65) rotate(-8deg);
+}
+
+.letter-image.fly .animated-mail {
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity .9s ease;
+    transform: none;
 }

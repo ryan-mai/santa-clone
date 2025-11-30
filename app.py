@@ -6,10 +6,7 @@ import requests
 from flask import Flask, request, send_file, render_template, Response
 import io
 
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
+from email.message import EmailMessage
 import smtplib
 
 load_dotenv()
@@ -24,110 +21,84 @@ SMTP_PORT = 587
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
-def send_email(recipient_email, subject, body):
+elevenlabs = ElevenLabs(
+    api_key=API_KEY
+)
+
+app = Flask(__name__)
+
+def post_tts(txt: str):
+    try:
+        audio_gen = elevenlabs.text_to_speech.convert(
+            text=txt,
+            voice_id=VOICE_ID,
+            model_id="eleven_turbo_v2",
+            output_format="mp3_44100_128",
+        )
+
+        audio_bytes = b"".join(chunk for chunk in audio_gen)
+        return audio_bytes
+    
+    except Exception as e:
+        print(f"Error: {e}")
+
+def send_email(recipient_email, subject, body, bytes, filename="santas_memo.mp3"):
     if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
         return
     try:
-        msg = MIMEMultipart()
+        msg = EmailMessage()
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = recipient_email
         msg['Subject'] = subject
-
-        msg.attach(MIMEText(body, 'plain'))
-        print("Email text added")
-        file = "output.mp3"
-        with open(file, "rb") as f:
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(f.read())
-
-            encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f'attachment; filename"{file}"'
+        msg.set_content(body)
+        
+        msg.add_attachment(
+            bytes,
+            maintype="audio",
+            subtype="mpeg",
+            filename=filename
         )
-
-        msg.attach(part)
 
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, recipient_email, msg.as_string())
+            server.send_message(msg)
 
             print("Email sent to: ", recipient_email)
+            return True
     except Exception as e:
         print(f"Error sending mail: {e}")
-        return
+        return False
+
+@app.route('/')
+def home():
+    print('Opening tts.html')
+    return render_template("tts.html")
+
+@app.route('/generate', methods=['POST'])
+def generate_audio():
+    child = request.form.get('name', 'Your Child')
+    subject = request.form.get('context', '')
+    text = request.form.get('text', '')
+    parent_email = request.form.get('parent_email', '').strip()
+
+    if not subject or not text or not parent_email:
+        return ("Incomplete form!", 400)
+
+    audio = post_tts(text)
+    if not audio:
+        return ("Santa is unable to speak to your child :( at this time", 500)
+    audio_bytes = io.BytesIO(audio) #type: ignore
+    audio_bytes.seek(0)
+
+    email_subject = f"Santa's message for {child}"
+    email_body = f'Ho ho ho! I hope you are doing well, {child}. I have recieved your note: "{subject}." Because I am so busy preparing my toys, I can\'t speak with you directly. So {child}, I have sent you a voice recording. Please listen and I hope you have a wonderful christmas!'
+
+    sent = send_email(parent_email, email_subject, email_body, audio, filename="santas_memo.mp3")
+    if sent:
+        return ("Email sent", 200)
+    else:
+        return ("Failed", 500)
 
 if __name__ == '__main__':
-    recipient = "inoober2008@gmail.com"
-    subject = "Yo"
-    body = "Yay"
-    send_email(recipient, subject, body)
-# elevenlabs = ElevenLabs(
-#     api_key=API_KEY
-# )
-
-# app = Flask(__name__)
-
-# def post_tts(txt: str):
-#     try:
-#         audio_gen = elevenlabs.text_to_speech.convert(
-#             text=txt,
-#             voice_id=VOICE_ID,
-#             model_id="eleven_turbo_v2",
-#             output_format="mp3_44100_128",
-#         )
-
-#         audio_bytes = b"".join(chunk for chunk in audio_gen)
-#         return audio_bytes
-    
-#     except Exception as e:
-#         print(f"Error: {e}")
-
-# @app.route('/')
-# def home():
-#     print('Opening index.html')
-#     return render_template("index.html")
-
-# @app.route('/generate', methods=['POST'])
-# def generate_audio():
-#     text = request.form.get('text', 'Hello')
-
-#     audio = post_tts(text)
-
-#     audio_bytes = io.BytesIO(audio) #type: ignore
-#     audio_bytes.seek(0)
-
-#     return send_file(
-#         audio_bytes,
-#         as_attachment=True,
-#         download_name="output.mp3",
-#         mimetype="audio/mpeg"
-#     )
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-# url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream"
-
-# headers = {
-#     "xi-api-key": API_KEY
-# }
-
-# data = {
-#     "model_id": "eleven_flash_v2_5"
-# }
-
-# files = {
-#     "audio": open(INPUT_FILE, "rb")
-# }
-
-# response = requests.post(url, headers=headers, data=data, files=files, stream=True)
-
-# if response.status_code == 200:
-#     with open(OUTPUT_FILE, "wb") as f:
-#         for chunk in response.iter_content(chunk_size=1024):
-#             if chunk:
-#                 f.write(chunk)
-# else:
-#     print("error", response.status_code, response.text)
+    app.run(debug=True)

@@ -15,20 +15,28 @@
             <div class="back-fold"></div>
             <div class="letter">
                 <div class="letter-border"></div>
-                <div class="letter-title">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" placeholder="Your Name">
-                </div>
-                <div class="letter-context">
-                    <label for="subject">Subject:</label>
-                    <input type="text" id="subject" placeholder="Your Wish">
-                </div>
+                <form method="POST" action="/generate">
+                    <div class="letter-title">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="letter-context">
+                        <label for="subject">Subject:</label>
+                        <input type="text" id="subject" name="context" placeholder="Your Wish" required>
+                    </div>
+                    <textarea class="letter-textarea" name="text" placeholder="Dear Santa," required></textarea>
+                    <div class="letter-email">
+                        <label for="parent_email">Parent Email:</label>
+                        <input type="email" id="parent_email" name="parent_email" placeholder="parent@example.com" required>
+                    </div>
+                    <button class="cancel-btn" type="button">Cancel</button>
+                    <button type="submit" class="submit-btn">Send Mail</button>
+                </form>
                 <div class="letter-stamp">
                     <div class="letter-stamp-inner"></div>
                 </div>
-                <textarea class="letter-textarea" placeholder="Dear Santa," required></textarea>
-                <button class="cancel-btn">Cancel</button>
             </div>
+    
             <div class="top-fold"></div>
             <div class="body"></div>
             <div class="left-fold"></div>

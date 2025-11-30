@@ -9,6 +9,7 @@ letterImage.addEventListener('click', () => {
 });
 
 cancelBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     if (!letterImage.classList.contains('expanded')) return;
     e.stopPropagation();
     letterImage.classList.remove('expanded');
