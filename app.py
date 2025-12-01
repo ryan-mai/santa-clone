@@ -72,8 +72,12 @@ def send_email(recipient_email, subject, body, bytes, filename="santas_memo.mp3"
 
 @app.route('/')
 def home():
-    print('Opening tts.html')
-    return render_template("tts.html")
+    print('Opening index.html')
+    return render_template("index.html")
+
+@app.route('/tts')
+def tts_page():
+    return render_template('tts.html')
 
 @app.route('/generate', methods=['POST'])
 def generate_audio():
