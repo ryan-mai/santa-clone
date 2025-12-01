@@ -71,7 +71,7 @@ function snowfall() {
 
 }
 
-setInterval(snowfall, 200);
+setInterval(snowfall, 300);
 
 let prevSparkle = 0;
 const SPARKLE_FREQ = 20;
@@ -82,34 +82,49 @@ const MAX_SPARKLES = 80;
 
 document.addEventListener('mousemove', (e) => {
     if (isDragging) return;
-    mouseX = e.clientY;
+    mouseX = e.clientX;
     mouseY = e.clientY;
 });
 
-document.addEventListener('mousemove', function(e) {
-    if (isDragging) return;
-    const now = performance.now();
-    if (now - prevSparkle < SPARKLE_FREQ) return;
-    prevSparkle = now;
+const sparkles = [];
 
+function makeSparkles(x, y) {
     const sparkle = document.createElement('div');
     sparkle.classList.add('sparkle');
 
-    mouseX = e.clientY;
-    mouseY = e.clientY;
+    const sparkleX = (Math.random() - 0.5) * 16;
+    const sparkleY = (Math.random() - 0.5) * 16;
 
-
-
-    const x = e.pageX + (Math.random() - 0.5) * 10;
-    const y = e.pageY + (Math.random() - 0.5) * 10;
-
-    sparkle.style.left = x + 'px';
-    sparkle.style.top = y + 'px';
+    sparkle.style.left = (x + sparkleX) + 'px';
+    sparkle.style.top = (y + sparkleY) + 'px';
     sparkle.style.willChange = 'opacity, transform';
     sparkle.style.pointerEvents = 'none';
 
     document.body.appendChild(sparkle);
-    setTimeout(() => {
-        sparkle.remove();
-    }, 800);
-});
+    sparkles.push({
+        el: sparkle,
+        createAt: performance.now()
+    });
+
+    if (sparkles.length > MAX_SPARKLES) {
+        const old = sparkles.shift();
+        old.el.remove();
+    }
+}
+
+function sparkleLoop(now) {
+    if (!isDragging && now - prevSparkle >= SPARKLE_FREQ) {
+        prevSparkle = now;
+        makeSparkles(mouseX, mouseY)
+    }
+
+    for (let i=sparkles.length - 1; i>=0; i--) {
+        if (now - sparkles[i].createAt > 600) {
+            sparkles[i].el.remove();
+            sparkles.splice(i, 1);
+        }
+    }
+    requestAnimationFrame(sparkleLoop);
+}
+
+requestAnimationFrame(sparkleLoop);
