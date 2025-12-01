@@ -25,7 +25,7 @@ elevenlabs = ElevenLabs(
     api_key=API_KEY
 )
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 def post_tts(txt: str):
     try:
