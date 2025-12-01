@@ -209,10 +209,20 @@ h1 {
     transform: rotate(3deg);
 }
 
+.concept-four .word:hover .char:nth-child(10) {
+    margin-top: -30px;
+    transform: rotate(3deg);
+}
+
+.concept-four .word:hover .char:nth-child(11) {
+    margin: -40px 0 0 10px;
+    transform: rotate(-3deg);
+}
+
 .concept-four .word:hover {
     transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .concept-four h1 {
-    font: 900 360px var(--serif);
+    font: 900 280px var(--serif);
     color: var(--white);
 }
