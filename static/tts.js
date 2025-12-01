@@ -65,3 +65,9 @@ form.addEventListener('submit', async(e) => {
         alert('Oopsies! Santa is busy');
     }
 })
+
+document.body.addEventListener('click', () => {
+    const audio = document.getElementById('bg-music');
+    audio.volume = 0.167 // 676767
+    audio.play().catch(e => console.log("Can't play santa's music :(", e));
+}, { once: false });

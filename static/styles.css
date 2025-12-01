@@ -21,7 +21,7 @@ body {
 
 h1 {
     font-family: var(--mono);
-    font-size: 3em;
+    font-size: 5em;
     margin-bottom: 20px;
 }
 
@@ -33,18 +33,6 @@ textarea {
     font-size: 1.2em;
     border-radius: 5px;
     border: none;
-}
-
-button {
-    margin-top: 20px;
-    padding: 15px 40px;
-    font-size: 1.3em;
-    background: var(--gold);
-    color: var(--red);
-}
-
-button:hover {
-    background: #FFC107;
 }
 
 .wrapper {
@@ -170,4 +158,43 @@ button:hover {
         transform: scale(0);
         opacity: 0;
     }
+}
+
+.button-wrapper {
+    width: 100%;
+    margin-top: 50px;
+    padding-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+    gap: 20px;
+}
+
+button {
+    cursor: pointer;
+    background-color: var(--gold);
+    border: 3px solid var(--white);
+    padding: 12px 35px;
+    transition: all 0.3s ease;
+    font-family: var(--mono);
+}
+
+button a {
+    font-size: 5rem;
+    text-decoration: none;
+    color: var(--white);
+    display: block;
+}
+
+button:hover:nth-child(1) {
+    background-color: var(--red);
+    transform: scale(1.1) rotate(-2deg);
+    box-shadow: 0 0 20px var(--gold);
+}
+
+button:hover:nth-child(2) {
+    background-color: var(--green);
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 0 20px var(--gold);
 }

@@ -1,4 +1,9 @@
 (() => {
+    document.body.addEventListener('click', () => {
+    const audio = document.getElementById('bg-music');
+    audio.volume = 0.167 // 676767
+    audio.play().catch(e => console.log("Can't play santa's music :(", e));
+    }, { once: false });
     const chars = Array.from(document.querySelectorAll('.concept-four .char'));
     if (!chars.length) return;
 

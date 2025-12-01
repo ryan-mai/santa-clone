@@ -79,6 +79,11 @@ def home():
 def tts_page():
     return render_template('tts.html')
 
+@app.route('/countdown')
+def countdown_page():
+    return render_template('countdown.html')
+
+
 @app.route('/generate', methods=['POST'])
 def generate_audio():
     child = request.form.get('name', 'Your Child')
