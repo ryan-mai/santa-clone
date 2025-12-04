@@ -31,7 +31,14 @@ elevenlabs = ElevenLabs(
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 def get_gmail_service():
-    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    creds = Credentials(
+        token=None,
+        refresh_token=os.getenv("GOOGLE_REFRESH_TOKEN"),
+        client_id=os.getenv("GOOGLE_CLIENT_ID"),
+        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+        token_uri="https://oauth2.googleapis.com/token",
+        scopes=SCOPES
+    )
     return build("gmail", "v1", credentials=creds)
 
 def add_attachment(sender, to, subject, html, attachment, filename):
