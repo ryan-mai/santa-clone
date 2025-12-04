@@ -5,9 +5,14 @@ from dotenv import load_dotenv
 import requests
 from flask import Flask, request, send_file, render_template, Response
 import io
+import base64
 
-from email.message import EmailMessage
-import smtplib
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email import encoders
 
 load_dotenv()
 
@@ -16,16 +21,41 @@ VOICE_ID = "uDsPstFWFBUXjIBimV7s"
 INPUT_FILE = "./audio/Recording.m4a"
 OUTPUT_FILE = "output.mp3"
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 
 elevenlabs = ElevenLabs(
     api_key=API_KEY
 )
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
+
+def get_gmail_service():
+    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    return build("gmail", "v1", credentials=creds)
+
+def add_attachment(sender, to, subject, html, attachment, filename):
+    msg = MIMEText(html, "html")
+    msg['From'] = sender
+    msg['To'] = to
+    msg['Subject'] = subject
+    
+    mixed = MIMEMultipart("mixed")
+    mixed["To"] = msg["To"]
+    mixed["From"] = msg["From"]
+    mixed["Subject"] = msg["Subject"]
+
+    mixed.attach(msg)
+
+    audio = MIMEBase("audio", "mpeg")
+    audio.set_payload(attachment)
+    encoders.encode_base64(audio)
+    audio.add_header("Content-Disposition", f'attachment; filename="{filename}"')
+
+    mixed.attach(audio)
+
+    raw = base64.urlsafe_b64encode(mixed.as_bytes()).decode()
+    return {"raw": raw}
 
 def post_tts(txt: str):
     try:
@@ -43,29 +73,13 @@ def post_tts(txt: str):
         print(f"Error: {e}")
 
 def send_email(recipient_email, subject, body, bytes, filename="santas_memo.mp3"):
-    if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
-        return
     try:
-        msg = EmailMessage()
-        msg['From'] = EMAIL_ADDRESS
-        msg['To'] = recipient_email
-        msg['Subject'] = subject
-        msg.set_content(body)
-        
-        msg.add_attachment(
-            bytes,
-            maintype="audio",
-            subtype="mpeg",
-            filename=filename
-        )
+        service = get_gmail_service()
+        msg = add_attachment(GMAIL_SENDER, recipient_email, subject, body, bytes, filename)
+        sent = service.users().messages().send(userId="me", body=msg).execute()
+        print("Santa sent it!", sent.get("id"))
+        return True
 
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(msg)
-
-            print("Email sent to: ", recipient_email)
-            return True
     except Exception as e:
         print(f"Error sending mail: {e}")
         return False
